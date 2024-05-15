@@ -1,5 +1,4 @@
 import random
-import time
 
 HANGMAN_PICS = [
     '''
@@ -84,15 +83,15 @@ def get_guess(already_guessed):
 
 def select_category():
     print('Select a category:')
-    for idx, category in enumerate(words_by_category.keys(), 1):
+    categories = list(words_by_category.keys())
+    for idx, category in enumerate(categories, 1):
         print(f'{idx}. {category.capitalize()}')
     while True:
-        try:
-            choice = int(input()) - 1
-            if 0 <= choice < len(words_by_category):
-                return list(words_by_category.keys())[choice]
-        except ValueError:
-            pass
+        choice = input('Enter the number of your choice: ')
+        if choice.isdigit():
+            choice = int(choice) - 1
+            if 0 <= choice < len(categories):
+                return categories[choice]
         print('Invalid choice.')
 
 def main():
