@@ -1,120 +1,98 @@
-import random
+#
+# A hangman game in progress
+# Keeps track of the phrase to guess and what has been guessed
+#
 
-HANGMAN_PICS = [
-    '''
-    +---+
-         |
-         |
-         |
-        ===
-    ''',
-    '''
-    +---+
-    O   |
-        |
-        |
-       ===
-    ''',
-    '''
-    +---+
-    O   |
-    |   |
-        |
-       ===
-    ''',
-    '''
-    +---+
-    O   |
-   /|   |
-        |
-       ===
-    ''',
-    '''
-    +---+
-    O   |
-   /|\  |
-        |
-       ===
-    ''',
-    '''
-    +---+
-    O   |
-   /|\  |
-   /    |
-       ===
-    ''',
-    '''
-    +---+
-    O   |
-   /|\  |
-   / \  |
-       ===
-    '''
-]
+from log import Log
 
-words_by_category = {
-    'animals': 'ant baboon badger bat bear beaver camel cat clam cobra cougar coyote crow deer dog donkey duck eagle ferret fox frog goat goose hawk lion lizard llama mole monkey moose mouse mule newt otter owl panda parrot pigeon python rabbit ram rat raven rhino salmon seal shark sheep skunk sloth snake spider stork swan tiger toad trout turkey turtle weasel whale wolf wombat zebra'.split(),
-    'fruits': 'apple banana cherry date elderberry fig grapefruit guava honeydew kiwi lemon mango nectarine orange peach pear quince raspberry strawberry tangerine'.split(),
-    'countries': 'afghanistan albania algeria andorra angola antigua argentina armenia australia austria azerbaijan bahamas bahrain bangladesh barbados belarus belgium belize benin bhutan bolivia bosnia botswana brazil brunei bulgaria burkina faso burundi cambodia cameroon canada cape verde chad chile china colombia comoros congo costa rica croatia cuba cyprus czech republic denmark djibouti dominica ecuador egypt el salvador equatorial guinea eritrea estonia ethiopia fiji finland france gabon gambia georgia germany ghana greece grenada guatemala guinea guinea-bissau guyana haiti honduras hungary iceland india indonesia iran iraq ireland israel italy jamaica japan jordan kazakhstan kenya kiribati kosovo kuwait kyrgyzstan laos latvia lebanon lesotho liberia libya liechtenstein lithuania luxembourg macedonia madagascar malawi malaysia maldives mali malta marshall islands mauritania mauritius mexico micronesia moldova monaco mongolia montenegro morocco mozambique myanmar namibia nauru nepal netherlands new zealand nicaragua niger nigeria north korea norway oman pakistan palau panama papua paraguay peru philippines poland portugal qatar romania russia rwanda samoa san marino sao tome saudi arabia senegal serbia seychelles sierra leone singapore slovakia slovenia solomon islands somalia south africa south korea south sudan spain sri lanka sudan suriname swaziland sweden switzerland syria taiwan tajikistan tanzania thailand timor-leste togo tonga trinidad tunisia turkey turkmenistan tuvalu uganda ukraine united arab emirates united kingdom united states uruguay uzbekistan vanuatu vatican city venezuela vietnam yemen zambia zimbabwe'.split(),
-    'colors': 'red green blue yellow orange white black purple gray lime maroon navy brown coral cyan magenta indigo turquoise gold silver ivory beige'.split(),
-    'flowers': 'rose tulip daisy lily lotus orchid bolossom iris poppy sunflower daffodil dandelion petunia bluebell hyacinth lavender'.split(),
-    'indian states': 'jammukashmir himachal uttarakhand punjab haryana uttarpradesh assam tamilnadu kerela maharashtra goa bihar chattisgarh ladakh rajasthan gujrat madhyapradesh karnatka odisha jharkhand westbengal arunachalpraesh nagaland mizoram manipur tripura meghalya sikkim telangana'.split(),
-    'programming languages': 'python javascript java c cp php sql swift rust nextjs tablue ruby kotlin typescript pearl golang django html css react'.split(),
-    'languages': 'hindi punjabi english dogri urdu french spanish assamase bengali bodo gujrati kannada kashmiri monkani maithili malayalam marathi meitei nepali odia sanskrit sindhi tamil telugu santali portuguese dari arabic german russian dutch bulgarian greek korean danish indonesian thai turkish chinese'.split(),
-    'shapes': 'circle sqaure rectangle trapezium cuboid cube pyramid sphere ring disc pentagon heart star hexagon crescent cylinder'.split(),
-    'luxury brands': 'gucci prada dior lv versace armani rolex balmani tiffany fendi chanel burberry hermes calvinklien boss chloe michaelkors jimmychoo givenchy kenzo nike'.split(),
-}
+class Hangman:
 
-def get_random_word(word_list):
-    return random.choice(word_list)
+  def __init__(self, phrase):
+    # Set the phrase to guess
+    self.phrase = phrase
+    self.numChars = len(self.phrase)
+    self.underlinePhrase = ""
+    self.usedLetters = []
+    self.numLives = 9
 
-def display_board(missed_letters, correct_letters, secret_word):
-    print(HANGMAN_PICS[len(missed_letters)])
-    print('Missed letters:', ' '.join(missed_letters))
-    blanks = [letter if letter in correct_letters else '_' for letter in secret_word]
-    print('Current word:', ' '.join(blanks))
+    for x in range(0, self.numChars - 1):
+      if self.phrase[x] == " ":
+        self.underlinePhrase = self.underlinePhrase + "  "
+      else:
+        self.underlinePhrase = self.underlinePhrase + "_ "
 
-def get_guess(already_guessed):
-    while True:
-        guess = input('Please guess a letter: ').lower()
-        if len(guess) == 1 and guess.isalpha() and guess not in already_guessed:
-            return guess
-        print('Invalid guess.')
+    if self.phrase[self.numChars - 1] == " ":
+      self.underlinePhrase = self.underlinePhrase + " "
+    else:
+      self.underlinePhrase = self.underlinePhrase + "_"
 
-def select_category():
-    print('Select a category:')
-    categories = list(words_by_category.keys())
-    for idx, category in enumerate(categories, 1):
-        print(f'{idx}. {category.capitalize()}')
-    while True:
-        choice = input('Enter the number of your choice: ')
-        if choice.isdigit():
-            choice = int(choice) - 1
-            if 0 <= choice < len(categories):
-                return categories[choice]
-        print('Invalid choice.')
+  # Guess the letter
+  def guess(self, letter):
+    Log.d("Guessing the letter " + letter + " in " + self.phrase)
+    self.userGuess = letter.upper()
+    self.usedLetters.append(self.userGuess)
 
-def main():
-    print('H A N G M A N')
-    category = select_category()
-    secret_word = get_random_word(words_by_category[category])
-    missed_letters = []
-    correct_letters = []
+    if self.inPhrase(self.userGuess) == False:
+        self.numLives = self.numLives - 1
 
-    while True:
-        display_board(missed_letters, correct_letters, secret_word)
-        guess = get_guess(missed_letters + correct_letters)
-        if guess in secret_word:
-            correct_letters.append(guess)
-            if set(secret_word) <= set(correct_letters):
-                print(f'Congratulations! You guessed the word: {secret_word}')
-                break
-        else:
-            missed_letters.append(guess)
-            if len(missed_letters) == len(HANGMAN_PICS) - 1:
-                display_board(missed_letters, correct_letters, secret_word)
-                print(f'Sorry, you\'ve been hanged! The word was: {secret_word}')
-                break
+    for x in range(0, self.numChars):
+      if self.phrase[x].upper() == self.userGuess.upper():
+        self.underlinePhrase = self.underlinePhrase[:(2*x)] + self.phrase[x] + self.underlinePhrase[(2*x)+1:]
 
-if __name__ == "__main__":
-    main()
+  def inPhrase(self, letter):
+    for x in range(0, self.numChars):
+      if self.phrase[x].upper() == letter:
+        return True
+    return False
+
+  # Get the phrase back with underlines for what has not yet been guessed
+  # Ex. for "hello world", and guesses "e", return ["_e___ _____"]
+  def getCurrentlyDiscoveredPhrase(self):
+    return self.underlinePhrase
+  
+  # Checks if the phrase has been successfully completed
+  def isCompleted(self):
+    for x in range(0, len(self.underlinePhrase)):
+      if self.underlinePhrase[x] == "_":
+        return False
+    return True
+
+  # Return letters used
+  def getUsedLetters(self):
+    return self.usedLetters
+
+  def getNumLives(self):
+    return self.numLives
+
+# Used to test the class
+if __name__ == '__main__':
+  hm = Hangman(raw_input("Enter phrase to guess: "))
+  while (True):
+    lettersUsed = hm.getUsedLetters()
+    numLives = hm.getNumLives()
+    if numLives == 0:
+        Log.d("Game Over")
+        break
+    elif hm.isCompleted() == True:
+        Log.d("You win!")
+        break
+
+    repeatLetter = False
+    print "Used letters: ",
+    for x in range(0, len(lettersUsed)):
+        print lettersUsed[x],
+
+    print
+    Log.d("Lives remaining: " + str(numLives))
+    guessedLetter = raw_input("Enter letter: ")
+    for x in range(0, len(lettersUsed)):
+        if guessedLetter.upper() == lettersUsed[x].upper():
+            repeatLetter = True
+            break
+    if repeatLetter == True:
+        Log.d("This letter has been used already")
+        continue
+    else:
+        hm.guess(guessedLetter)
+    Log.d(hm.getCurrentlyDiscoveredPhrase())
+
