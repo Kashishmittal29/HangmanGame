@@ -1,88 +1,29 @@
-# Multiplayer Hangman
 
-![](https://github.com/MultiplayerHangman/MultiplayerHangman/raw/master/Resources/screenshot.png)
+## Hangman Game
 
-A multiplayer hangman game using Python and Javascript. For [Side Project Club](https://www.facebook.com/sideprojectclub/) in Winter 2018 at the University of Waterloo.
-
-Video demo: [https://www.youtube.com/watch?v=hay36VJ2_Xw](https://www.youtube.com/watch?v=hay36VJ2_Xw)
+Welcome to Hangman Game! This is a simple console-based game where you guess letters to reveal a hidden word.
 
 
-## Team members
+## How to Play
 
-- Teresa (@TeresaTXCA)
-- Eric (@Exxliang)
-- Alex (@alextwin)
+Run the hangman.py file in your Python environment.
+You will be prompted to guess a letter.
+Enter your guess.
+If the letter is correct, it will be revealed in the hidden word.
+If the letter is incorrect, part of the hangman will be drawn.
+Keep guessing letters until you either reveal the entire word (win) or the hangman is complete (lose).
+## Files
 
+hangman.py: Contains the main code for the game.
+words.txt: Contains a list of words that the game randomly selects from.
+## Requirements
 
-## Running
+Python 3.x
+## Acknowledgements
 
-For setup instructions, go to [SETUP](https://github.com/MultiplayerHangman/MultiplayerHangman/blob/master/SETUP.md)
+This Hangman Game project is inspired by various tutorials and resources available online.
 
-In a new Terminal/Command Prompt,
+## Contributors
 
-**Step 1**: Get to the project folder
+Contributions are welcome! Feel free to fork this repository and submit pull requests with improvements or new features.
 
-*On Mac*
-
-```
-cd ~/Documents/GitHub/MultiplayerHangman
-```
-
-*On Windows*
-
-```
-cd Documents\GitHub\MultiplayerHangman
-```
-
-**Step 2**: Start the server
-
-*On Mac*
-
-```
-. venv/bin/activate
-export FLASK_APP="server.py"
-export FLASK_DEBUG=1
-flask run
-```
-
-*On Windows*
-
-```
-venv\Scripts\activate
-set FLASK_APP=server.py
-set FLASK_DEBUG=1
-flask run
-```
-
-**Step 3**: Open the webpage
-
-In a browser, go to:
-
-```
-http://localhost:5000
-```
-
-⚠️ When you change JS/CSS, make sure to **refresh while holding the Shift button**! Otherwise the files may be cached by the browser and **you will not see the updates**.
-
-
-## Project files
-
-These are the files you need to change when you want to make changes.
-
-```
-MultiplayerHangman/      (project folder)
-|
-├── server.py            (Python server)
-├── static/
-|   └── js/
-|       └── hangman.js   (Javascript loaded on website)
-|   └── css/
-|       └── hangman.css  (CSS loaded on website)
-└── templates/
-    └── index.html       (HTML loaded on website)
-```
-
-
-## Game flow
-
-![](https://github.com/MultiplayerHangman/MultiplayerHangman/raw/master/Resources/gameflow.png)
